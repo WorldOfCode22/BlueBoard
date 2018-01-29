@@ -11,5 +11,6 @@ module.exports = new GraphQLObjectType({
         firstName:{type: GraphQLString},
         lastName: {type: GraphQLString},
         organization:{type: GraphQLString},
+        role:{type: GraphQLString}
     }
 })
