@@ -51,6 +51,40 @@ module.exports = new GraphQLObjectType({
                         }
                     })
                 }
-            }
+            },
+          editUser:{
+              type:UserType,
+              args:{
+                  id:{ type: new GraphQLNonNull(GraphQLString)},
+                  username:{type: GraphQLString},
+                  password:{type: GraphQLString},
+              },
+              resolve(parentVal,args){
+                  let argsKeys = Object.keys(args);
+                  return UserModel.findById(args.id).then((doc)=>{
+                     if(doc){
+                         let docKeys = Object.keys(doc._doc);
+                         console.log(argsKeys);
+                         console.log(docKeys);
+                         for(i = 0; i<argsKeys.length;i++){
+                             var index = docKeys.indexOf(argsKeys[i]);
+                             console.log(index);
+                             if(index === -1){
+                                 
+                             }else{
+                                 var docChangeKey = docKeys[index];
+                                 var argsChangeKey = argsKeys[i];
+                                 doc[docChangeKey] = args[argsChangeKey];
+                             }
+                         }
+                         return doc.save().then((doc)=>{
+                             return doc;
+                         })
+                     }else{
+                         throw "No Such User"
+                     }
+                  })
+              }
+          }
         }
     })
