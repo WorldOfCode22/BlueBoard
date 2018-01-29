@@ -34,7 +34,23 @@ module.exports = new GraphQLObjectType({
                         })
                     }
                 })
+            },
+        },
+            deleteUser:{
+                type:UserType,
+                args:{
+                    id:{type: new GraphQLNonNull(GraphQLString)},
+                    password:{type: new GraphQLNonNull(GraphQLString)}
+                },
+                resolve(parentVal,args){
+                    return UserModel.remove({_id:args.id,password:args.password}).then((doc)=>{
+                        if(!doc){
+                            throw "User Not Removed " + err;
+                        }else{
+                            throw "User Removed"
+                        }
+                    })
+                }
             }
         }
-    }
-})
+    })
