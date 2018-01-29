@@ -13,7 +13,6 @@ A BlackBoard Clone
     ### Add user authorization
     ### Add organization schema and mutations 
     ### Add class scheam and mutations
-    ### Add Student schema and mutations
     ### Setup React
     
 ## Frontend
