@@ -76,7 +76,9 @@ module.exports = new GraphQLObjectType({
                              var index = docKeys.indexOf(argsKeys[i]);
                              console.log(index);
                              if(index === -1){
-                                 
+                                 var newDocKey = argsKeys[i];
+                                 var argsChangeKey = argsKeys[i];
+                                 doc[newDocKey] = args[argsChangeKey];
                              }else{
                                  var docChangeKey = docKeys[index];
                                  var argsChangeKey = argsKeys[i];
