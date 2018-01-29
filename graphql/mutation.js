@@ -14,7 +14,10 @@ module.exports = new GraphQLObjectType({
             args:{
                 username:{type: new GraphQLNonNull(GraphQLString)},
                 password:{type: new GraphQLNonNull(GraphQLString)},
-                organization:{type: new GraphQLNonNull(GraphQLString)},
+                firstname:{type: GraphQLString},
+                lastname: {type: GraphQLString},
+                role:{type: GraphQLString},
+                organization:{type: GraphQLString},
             },
             resolve(parentVal,args){
                 return UserModel.findOne({username:args.username}).then((doc)=>{
@@ -55,9 +58,12 @@ module.exports = new GraphQLObjectType({
           editUser:{
               type:UserType,
               args:{
-                  id:{ type: new GraphQLNonNull(GraphQLString)},
+                  id:{type: new GraphQLNonNull(GraphQLString)},
                   username:{type: GraphQLString},
                   password:{type: GraphQLString},
+                  firstname:{type: GraphQLString},
+                  lastname:{type: GraphQLString},
+                  role:{type: GraphQLString}
               },
               resolve(parentVal,args){
                   let argsKeys = Object.keys(args);
@@ -70,7 +76,9 @@ module.exports = new GraphQLObjectType({
                              var index = docKeys.indexOf(argsKeys[i]);
                              console.log(index);
                              if(index === -1){
-                                 
+                                 var newDocKey = argsKeys[i];
+                                 var argsChangeKey = argsKeys[i];
+                                 doc[newDocKey] = args[argsChangeKey];
                              }else{
                                  var docChangeKey = docKeys[index];
                                  var argsChangeKey = argsKeys[i];

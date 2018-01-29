@@ -8,6 +8,9 @@ module.exports = new GraphQLObjectType({
     fields:{
         id:{type: GraphQLString},
         username:{type: GraphQLString},
+        firstName:{type: GraphQLString},
+        lastName: {type: GraphQLString},
         organization:{type: GraphQLString},
+        role:{type: GraphQLString}
     }
 })
