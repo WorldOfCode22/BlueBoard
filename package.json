@@ -1,0 +1,19 @@
+{
+  "name": "blueboard-dev-data",
+  "version": "0.0.1",
+  "description": "A data service for blueboard project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WorldOfCode22/BlueBoard.git"
+  },
+  "author": "Sloan Gwaltney (WorldOfCode22@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/WorldOfCode22/BlueBoard/issues"
+  },
+  "homepage": "https://github.com/WorldOfCode22/BlueBoard#readme"
+}
