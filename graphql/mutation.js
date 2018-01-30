@@ -1,10 +1,14 @@
 const{
     GraphQLObjectType,
     GraphQLString,
-    GraphQLNonNull
+    GraphQLNonNull,
+    GraphQLList
 } = require("graphql");
 const UserType = require("./query/user-type");
+const ClassType = require("./query/class-type");
+const AssignmentsType = require("./query/assignments-type").InputType;
 const UserModel = require("../mongoose/models/user");
+const ClassModel = require("../mongoose/models/class"); 
 
 module.exports = new GraphQLObjectType({
     name:"Mutation",
@@ -93,6 +97,79 @@ module.exports = new GraphQLObjectType({
                      }
                   })
               }
-          }
+          },
+        addClass:{
+            type: ClassType,
+            args:{
+                name: {type: GraphQLNonNull(GraphQLString)},
+                section: {type: GraphQLString},
+                admin: {type: GraphQLNonNull(GraphQLString)},
+                teacher: {type: GraphQLString}
+            },
+            resolve(parentVal,args){
+                return new ClassModel({
+                    name: args.name,
+                    section: args.section,
+                    admin: args.admin,
+                    teacher: args.teacher
+                }).save().then((doc)=>{
+                    return doc;
+                })
+            }
+        },
+        removeClass:{
+            type: ClassType,
+            args:{
+                id:{type: GraphQLString}
+            },
+            resolve(parentVal,args){
+                return ClassModel.remove({_id:args.id}).then((doc)=>{
+                    if(doc){
+                        throw "User Deleted";
+                    }else{
+                        throw "No Such User";
+                    }
+                })
+            }
+        },
+        editClass:{
+        type: ClassType,
+            args:{
+                id:{type: GraphQLNonNull(GraphQLString)},
+                name: {type: GraphQLString},
+                section: {type: GraphQLString},
+                admin: {type: GraphQLString},
+                teacher: {type: GraphQLString},
+                assignments: {type:GraphQLList(AssignmentsType)},
+                students: {type:GraphQLList(UserType.InputType)}
+            },
+            resolve(parentVal,args){
+                return ClassModel.findById(args.id).then((doc)=>{
+                     if(doc){
+                         let docKeys = Object.keys(doc._doc);
+                         console.log(argsKeys);
+                         console.log(docKeys);
+                         for(i = 0; i<argsKeys.length;i++){
+                             var index = docKeys.indexOf(argsKeys[i]);
+                             console.log(index);
+                             if(index === -1){
+                                 var newDocKey = argsKeys[i];
+                                 var argsChangeKey = argsKeys[i];
+                                 doc[newDocKey] = args[argsChangeKey];
+                             }else{
+                                 var docChangeKey = docKeys[index];
+                                 var argsChangeKey = argsKeys[i];
+                                 doc[docChangeKey] = args[argsChangeKey];
+                             }
+                         }
+                         return doc.save().then((doc)=>{
+                             return doc;
+                         })
+                     }else{
+                         throw "No Such User"
+                     }
+                  })
+            }
+    }
         }
     })
