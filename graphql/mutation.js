@@ -77,8 +77,6 @@ module.exports = new GraphQLObjectType({
                   return UserModel.findById(args.id).then((doc)=>{
                      if(doc){
                          let docKeys = Object.keys(doc._doc);
-                         console.log(argsKeys);
-                         console.log(docKeys);
                          for(i = 0; i<argsKeys.length;i++){
                              var index = docKeys.indexOf(argsKeys[i]);
                              console.log(index);
@@ -147,6 +145,7 @@ module.exports = new GraphQLObjectType({
                 students: {type:GraphQLList(UserType.InputType)}
             },
             resolve(parentVal,args){
+                let argsKeys = Object.keys(args);
                 return ClassModel.findById(args.id).then((doc)=>{
                      if(doc){
                          let docKeys = Object.keys(doc._doc);
@@ -199,6 +198,58 @@ module.exports = new GraphQLObjectType({
                     }
                 })
             }
+        },
+       removeOrganization:{
+           type:OrganizationType,
+           args:{
+               id: {type: new GraphQLNonNull(GraphQLString)},
+           },
+           resolve(parentVal, args){
+               return OrganizationModel.remove({_id: args.id}).then((doc)=>{
+                   if(doc){
+                       throw "Organization Removed";
+                   }else{
+                       throw "Error Removing Organization";
+                   }
+               })
+           }
+       },
+      editOrganization:{
+          type:OrganizationType,
+          args:{
+               id:{type: new GraphQLNonNull(GraphQLString)},
+               name:{type:GraphQLString},
+               classes: {type:GraphQLList(ClassType.InputType)},
+               teachers: {type:GraphQLList(UserType.InputType)},
+               students: {type:GraphQLList(UserType.InputType)},
+               admin: {type: GraphQLString}
+          },
+          resolve(parentVal,args){
+            let argsKeys = Object.keys(args);
+            return OrganizationModel.findById(args.id).then((doc)=>{
+                     if(doc){
+                         let docKeys = Object.keys(doc._doc);
+                         for(i = 0; i<argsKeys.length;i++){
+                             var index = docKeys.indexOf(argsKeys[i]);
+                             console.log(index);
+                             if(index === -1){
+                                 var newDocKey = argsKeys[i];
+                                 var argsChangeKey = argsKeys[i];
+                                 doc[newDocKey] = args[argsChangeKey];
+                             }else{
+                                 var docChangeKey = docKeys[index];
+                                 var argsChangeKey = argsKeys[i];
+                                 doc[docChangeKey] = args[argsChangeKey];
+                             }
+                         }
+                         return doc.save().then((doc)=>{
+                             return doc;
+                         })
+                     }else{
+                         throw "No Such User"
+                     }
+          })
         }
-        }
-    })
+    }
+    }
+})

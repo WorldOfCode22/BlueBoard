@@ -11,6 +11,7 @@ const ClassType = require("./class-type");
 module.exports = new GraphQLObjectType({
    name:"Organization",
    fields:{
+       id: {type: GraphQLString},
        name:{type:GraphQLString},
        classes: {type:GraphQLList(ClassType)},
        teachers: {type:GraphQLList(UserType)},
