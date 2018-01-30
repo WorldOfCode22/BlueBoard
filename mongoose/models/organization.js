@@ -10,4 +10,4 @@ const organization = new Schema({
    admin: String
 });
 
-modules.exports = mongoose.model("organization", organization);
+module.exports = mongoose.model("organization", organization);

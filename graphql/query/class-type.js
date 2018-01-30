@@ -1,7 +1,8 @@
 const{
     GraphQLObjectType,
     GraphQLString,
-    GraphQLList
+    GraphQLList,
+    GraphQLInputObjectType
 } = require("graphql");
 
 const AssignmentsType = require("./assignments-type");
@@ -16,5 +17,18 @@ module.exports = new GraphQLObjectType({
         teacher: {type: GraphQLString},
         assignments: {type:GraphQLList(AssignmentsType)},
         students: {type:GraphQLList(UserType)}
+    }
+})
+
+module.exports.InputType = new GraphQLInputObjectType({
+    name:"ClassInputType",
+    fields:{
+        id:{type: GraphQLString},
+        name: {type: GraphQLString},
+        section: {type: GraphQLString},
+        admin: {type: GraphQLString},
+        teacher: {type: GraphQLString},
+        assignments: {type:GraphQLList(AssignmentsType.InputType)},
+        students: {type:GraphQLList(UserType.InputType)}
     }
 })
