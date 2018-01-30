@@ -4,11 +4,14 @@ const{
     GraphQLNonNull,
     GraphQLList
 } = require("graphql");
+
 const UserType = require("./query/user-type");
 const ClassType = require("./query/class-type");
 const AssignmentsType = require("./query/assignments-type").InputType;
+const OrganizationType = require("./query/organization-type");
 const UserModel = require("../mongoose/models/user");
-const ClassModel = require("../mongoose/models/class"); 
+const ClassModel = require("../mongoose/models/class");
+const OrganizationModel = require("../mongoose/models/organization");
 
 module.exports = new GraphQLObjectType({
     name:"Mutation",
@@ -170,6 +173,32 @@ module.exports = new GraphQLObjectType({
                      }
                   })
             }
-    }
+    },
+        addOrganization:{
+            type:OrganizationType,
+            args:{
+                name: {type: GraphQLNonNull(GraphQLString)},
+                admin: {type: GraphQLNonNull(GraphQLString)}
+            },
+            resolve(parentVal,args){
+                return UserModel.findById(args.admin).then((doc)=>{
+                    if(doc){
+                        return new OrganizationModel({
+                            name: args.name,
+                            admin: args.admin,
+                            dateCreated: parseInt(Date.now())
+                        }).save().then((doc)=>{
+                            if(doc){
+                                return doc;
+                            }else{
+                                throw "Error While Trying To Save Organization"
+                            }
+                        }) 
+                    }else{
+                        throw "No Such User";
+                    }
+                })
+            }
+        }
         }
     })
