@@ -38,13 +38,19 @@ app.use(require('express-session')({
   saveUninitialized: false,
 }));
 
+// // TEMPORARILY LOGGER
+// app.use('*', (req, res, next) => {
+//   console.log(req.session);
+//   next();
+// });
+
 app.use(
   '/graph',
   graphQLExpress(request => ({
     graphiql: true,
     schema: Schema,
     mutation,
-    rootValue: { session: request.session },
+    rootValue: request.session,
   })),
 );
 

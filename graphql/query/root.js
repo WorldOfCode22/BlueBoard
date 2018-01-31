@@ -20,7 +20,7 @@ module.exports = new GraphQLObjectType({
           if (doc) {
             return doc;
           }
-          throw 'No such user';
+          throw new Error('No such user');
         });
       },
     },
@@ -34,7 +34,7 @@ module.exports = new GraphQLObjectType({
           if (doc) {
             return doc;
           }
-          throw 'No such user';
+          throw new Error('No such user');
         });
       },
     },
