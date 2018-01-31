@@ -21,9 +21,9 @@ module.exports = new GraphQLObjectType({
         id: { type: new GraphQLNonNull(GraphQLString) },
       },
       resolve(parentVal, args) {
-        return UserModel.remove({ _id: args.id, password: args.password }).then((err, doc) => {
+        return UserModel.remove({ _id: args.id, password: args.password }).then((doc) => {
           if (!doc) {
-            throw new Error(`User Not Removed ${err}`);
+            throw new Error('User Not Removed.');
           } else {
             throw new Error('User Removed');
           }
@@ -35,29 +35,14 @@ module.exports = new GraphQLObjectType({
       args: {
         id: { type: new GraphQLNonNull(GraphQLString) },
         username: { type: GraphQLString },
-        firstname: { type: GraphQLString },
-        lastname: { type: GraphQLString },
+        firstName: { type: GraphQLString },
+        lastName: { type: GraphQLString },
         role: { type: GraphQLString },
       },
-      resolve(parentVal, args, { session }) {
-        console.log(session); // TODO: we don't use session but here's how to access
-        const argsKeys = Object.keys(args);
+      resolve(parentVal, args) {
         return UserModel.findById(args.id).then((doc) => {
           if (doc) {
-            const docKeys = Object.keys(doc._doc);
-            for (let i = 0; i < argsKeys.length; i++) {
-              const index = docKeys.indexOf(argsKeys[i]);
-              console.log(index);
-              if (index === -1) {
-                const newDocKey = argsKeys[i];
-                const argsChangeKey = argsKeys[i];
-                doc[newDocKey] = args[argsChangeKey];
-              } else {
-                const docChangeKey = docKeys[index];
-                const argsChangeKey = argsKeys[i];
-                doc[docChangeKey] = args[argsChangeKey];
-              }
-            }
+            doc = Object.assign(doc, args);
             return doc.save().then(doc => doc);
           }
           throw new Error('No Such User');
