@@ -49,6 +49,42 @@ module.exports = new GraphQLObjectType({
         });
       },
     },
+  addClass:{
+      type:ClassType,
+    args: {
+        organization: {type: new GraphQLNonNull(GraphQLString)},
+        name: {type: new GraphQLNonNull(GraphQLString)},
+        section: {type: new GraphQLNonNull(GraphQLString)},
+        teacher: {type: new GraphQLNonNull(GraphQLString)}
+    },
+      resolve(parentVal,args) {
+          return UserModel.findById(args.teacher).then((doc)=>{
+              if(doc){
+                  // Save Class
+                  return new ClassModel({
+                      organization:args.organization,
+                      name: args.name,
+                      section: args.section,
+                      teacher: args.teacher
+                  }).save().then((classDoc)=>{
+                      // Add changes to organization doc
+                      return OrganizationModel.findById(args.organization).then((orgDoc)=>{
+                          orgDoc.teachers.push({class:classDoc.id});
+                          orgDoc.classes.push(classDoc.id);
+                          return orgDoc.save().then((orgDoc)=>{
+                          // Add teacher to user doc
+                          return UserModel.findById(classDoc.teacher).then((doc)=>{
+                              doc.classes.push({role: "teacher", class:classDoc.id});
+                          return doc.save().then((userDoc)=>{
+                            return classDoc;
+                      })
+                  })
+              })
+              return new Error('No Such User');
+          })
+          })
+              }
+          })
   },
   editClass: {
     type: ClassType,
@@ -162,4 +198,6 @@ module.exports = new GraphQLObjectType({
       });
     },
   },
-});
+  }
+}
+})

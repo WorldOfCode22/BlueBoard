@@ -13,7 +13,7 @@ module.exports = new GraphQLObjectType({
         id:{type: GraphQLString},
         name: {type: GraphQLString},
         section: {type: GraphQLString},
-        admin: {type: GraphQLString},
+        organization: {type: GraphQLString},
         teacher: {type: GraphQLString},
         assignments: {type:GraphQLList(AssignmentsType)},
         students: {type:GraphQLList(UserType)}
