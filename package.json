@@ -14,7 +14,7 @@
 		"type": "git",
 		"url": "git+https://github.com/WorldOfCode22/BlueBoard.git"
 	},
-	"author": "Sloan Gwaltney (WorldOfCode22@gmail.com)",
+	"author": ["Sloan Gwaltney (WorldOfCode22@gmail.com)", "Edward Hong"],
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/WorldOfCode22/BlueBoard/issues"
