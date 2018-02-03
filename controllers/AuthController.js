@@ -41,8 +41,8 @@ userController.getUser = function (req, res){
     if(req.isAuthenticated()){
         res.json({user:req.user});
     }else{
-        res.send("Not Logged In");
-    }      
+        res.send('User Not Loged In');
+    }
 }
 userController.logout = function (req, res) {
   req.logout();
