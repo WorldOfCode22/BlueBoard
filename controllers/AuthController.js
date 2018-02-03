@@ -33,7 +33,9 @@ userController.doRegister = function (req, res) {
 
 userController.doLogin = function (req, res) {
   passport.authenticate('local')(req, res, () => {
-    res.send({ message: `Logged in as ${req.user.username}!` });
+    if(req.isAuthenticated()){
+      res.redirect("http://localhost:5000/dashboard");
+    }
   });
 };
 

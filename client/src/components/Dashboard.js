@@ -4,7 +4,7 @@ import ClassSidebar from './Class-Sidebar';
 class Dashboard extends React.Component {
   constructor() {
     super();
-    this.state = { user: {} };
+    this.state = { user: { classes: [] } };
     this.getUser();
   }
   getUser() {
@@ -14,16 +14,32 @@ class Dashboard extends React.Component {
     }).then((res) => {
       return res.json();
     }).then((json) => {
+      console.log(json.user);
       this.setState({ user: json.user });
     }).catch(() => {
       global.window.location = '/login';
     });
   }
-  render() {
+  getRender() {
+    if (this.state.user.organization === 'none') {
+      return (
+        <div>
+          <h3>In order to look at your classes and grades joing your organization.</h3>
+          <button>Find Organization</button>
+        </div>
+      );
+    }
     return (
       <div>
         <h1>Welcome {this.state.user.firstName}</h1>
-        <ClassSidebar classArray={[{ name: 'hello', section: '001' }]} />
+        <ClassSidebar classArray={this.state.user.classes} />
+      </div>
+    );
+  }
+  render() {
+    return (
+      <div>
+        {this.getRender()}
       </div>
     );
   }
