@@ -25,7 +25,7 @@ userController.doRegister = function (req, res) {
         return res.send({ message: `AuthController Error: ${err}` });
       }
       return passport.authenticate('local')(req, res, () => {
-        res.send({ message: `Welcome. You are ${user.username}.` });
+        res.send({ message: `Welcome. You are ${user.username}.`});
       });
     },
   );
@@ -37,6 +37,13 @@ userController.doLogin = function (req, res) {
   });
 };
 
+userController.getUser = function (req, res){
+    if(req.isAuthenticated()){
+        res.json({user:req.user});
+    }else{
+        res.send("Not Logged In");
+    }      
+}
 userController.logout = function (req, res) {
   req.logout();
   return res.send({ message: 'Logged out' });

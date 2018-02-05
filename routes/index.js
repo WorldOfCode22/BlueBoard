@@ -7,6 +7,7 @@ const auth = require('../controllers/AuthController.js');
 router.post('/register', auth.doRegister);
 router.post('/login', auth.doLogin);
 router.post('/logout', auth.logout);
+router.get('/current_user', auth.getUser);
 
 if (process.env.NODE_ENV === 'production') {
   router.use(express.static('client/build'));
