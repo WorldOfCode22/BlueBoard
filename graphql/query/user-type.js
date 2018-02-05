@@ -1,4 +1,5 @@
-const { GraphQLObjectType, GraphQLString, GraphQLInputObjectType } = require('graphql');
+const {GraphQLObjectType, GraphQLString, GraphQLInputObjectType, GraphQLList,} = require('graphql');
+
 
 module.exports = new GraphQLObjectType({
   name: 'User',
@@ -9,6 +10,7 @@ module.exports = new GraphQLObjectType({
     lastName: { type: GraphQLString },
     organization: { type: GraphQLString },
     role: { type: GraphQLString },
+    classes: { type: GraphQLList(GraphQLString) },
   },
 });
 

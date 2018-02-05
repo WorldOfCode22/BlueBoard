@@ -15,8 +15,8 @@ module.exports = new GraphQLObjectType({
         section: {type: GraphQLString},
         organization: {type: GraphQLString},
         teacher: {type: GraphQLString},
-        assignments: {type:GraphQLList(AssignmentsType)},
-        students: {type:GraphQLList(UserType)}
+        assignments: {type: GraphQLList(AssignmentsType)},
+        students: {type: GraphQLList(UserType)},
     }
 })
 
@@ -28,7 +28,7 @@ module.exports.InputType = new GraphQLInputObjectType({
         section: {type: GraphQLString},
         admin: {type: GraphQLString},
         teacher: {type: GraphQLString},
-        assignments: {type:GraphQLList(AssignmentsType.InputType)},
-        students: {type:GraphQLList(UserType.InputType)}
+        assignments: {type: GraphQLList(AssignmentsType.InputType)},
+        students: {type: GraphQLList(UserType.InputType)}
     }
 })

@@ -49,155 +49,155 @@ module.exports = new GraphQLObjectType({
         });
       },
     },
-  addClass:{
-      type:ClassType,
-    args: {
-        organization: {type: new GraphQLNonNull(GraphQLString)},
-        name: {type: new GraphQLNonNull(GraphQLString)},
-        section: {type: new GraphQLNonNull(GraphQLString)},
-        teacher: {type: new GraphQLNonNull(GraphQLString)}
-    },
-      resolve(parentVal,args) {
-          return UserModel.findById(args.teacher).then((doc)=>{
-              if(doc){
-                  // Save Class
-                  return new ClassModel({
-                      organization:args.organization,
-                      name: args.name,
-                      section: args.section,
-                      teacher: args.teacher
-                  }).save().then((classDoc)=>{
-                      // Add changes to organization doc
-                      return OrganizationModel.findById(args.organization).then((orgDoc)=>{
-                          orgDoc.teachers.push({class:classDoc.id});
-                          orgDoc.classes.push(classDoc.id);
-                          return orgDoc.save().then((orgDoc)=>{
-                          // Add teacher to user doc
-                          return UserModel.findById(classDoc.teacher).then((doc)=>{
-                              doc.classes.push({role: "teacher", class:classDoc.id});
-                          return doc.save().then((userDoc)=>{
-                            return classDoc;
-                      })
-                  })
-              })
-              return new Error('No Such User');
-          })
-          })
-              }
-          })
-  },
-  editClass: {
-    type: ClassType,
-    args: {
-      id: { type: GraphQLNonNull(GraphQLString) },
-      name: { type: GraphQLString },
-      section: { type: GraphQLString },
-      admin: { type: GraphQLString },
-      teacher: { type: GraphQLString },
-      assignments: { type: GraphQLList(AssignmentsType) },
-      students: { type: GraphQLList(UserType.InputType) },
-    },
-    resolve(parentVal, args) {
-      const argsKeys = Object.keys(args);
-      return ClassModel.findById(args.id).then((doc) => {
-        if (doc) {
-          const docKeys = Object.keys(doc._doc);
-          console.log(argsKeys);
-          console.log(docKeys);
-          for (let i = 0; i < argsKeys.length; i++) {
-            const index = docKeys.indexOf(argsKeys[i]);
-            console.log(index);
-            if (index === -1) {
-              const newDocKey = argsKeys[i];
-              const argsChangeKey = argsKeys[i];
-              doc[newDocKey] = args[argsChangeKey];
-            } else {
-              const docChangeKey = docKeys[index];
-              const argsChangeKey = argsKeys[i];
-              doc[docChangeKey] = args[argsChangeKey];
-            }
-          }
-          return doc.save().then(doc => doc);
-        }
-        throw new Error('No Such User');
-      });
-    },
-  },
-  addOrganization: {
-    type: OrganizationType,
-    args: {
-      name: { type: GraphQLNonNull(GraphQLString) },
-      admin: { type: GraphQLNonNull(GraphQLString) },
-    },
-    resolve(parentVal, args) {
-      return UserModel.findById(args.admin).then((doc) => {
-        if (doc) {
-          return new OrganizationModel({
-            name: args.name,
-            admin: args.admin,
-            dateCreated: parseInt(Date.now(), 10),
-          })
-            .save()
-            .then((doc) => {
-              if (doc) {
-                return doc;
-              }
-              throw new Error('Error While Trying To Save Organization');
+    addClass: {
+      type: ClassType,
+      args: {
+        organization: { type: new GraphQLNonNull(GraphQLString) },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        section: { type: new GraphQLNonNull(GraphQLString) },
+        teacher: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parentVal, args) {
+        return UserModel.findById(args.teacher).then((doc)=>{
+          if (doc) {
+            // Save Class
+            return new ClassModel({
+              organization: args.organization,
+              name: args.name,
+              section: args.section,
+              teacher: args.teacher,
+            }).save().then((classDoc) => {
+            // Add changes to organization doc
+              return OrganizationModel.findById(args.organization).then((orgDoc) => {
+                orgDoc.teachers.push({ class: classDoc.id });
+                orgDoc.classes.push(classDoc.id);
+                return orgDoc.save().then((orgDoc) => {
+                  // Add teacher to user doc
+                  return UserModel.findById(classDoc.teacher).then((doc) => {
+                    doc.classes.push({ role: 'teacher', class: classDoc.id });
+                    return doc.save().then((userDoc)=>{
+                      return classDoc;
+                    });
+                  });
+                });
+                return new Error('No Such User');
+              });
             });
-        }
-        throw new Error('No Such User');
-      });
-    },
-  },
-  removeOrganization: {
-    type: OrganizationType,
-    args: {
-      id: { type: new GraphQLNonNull(GraphQLString) },
-    },
-    resolve(parentVal, args) {
-      return OrganizationModel.remove({ _id: args.id }).then((doc) => {
-        if (doc) {
-          throw new Error('Organization Removed');
-        } else {
-          throw new Error('Error Removing Organization');
-        }
-      });
-    },
-  },
-  editOrganization: {
-    type: OrganizationType,
-    args: {
-      id: { type: new GraphQLNonNull(GraphQLString) },
-      name: { type: GraphQLString },
-      classes: { type: GraphQLList(ClassType.InputType) },
-      teachers: { type: GraphQLList(UserType.InputType) },
-      students: { type: GraphQLList(UserType.InputType) },
-      admin: { type: GraphQLString },
-    },
-    resolve(parentVal, args) {
-      const argsKeys = Object.keys(args);
-      return OrganizationModel.findById(args.id).then((doc) => {
-        if (doc) {
-          const docKeys = Object.keys(doc._doc);
-          for (let i = 0; i < argsKeys.length; i++) {
-            const index = docKeys.indexOf(argsKeys[i]);
-            console.log(index);
-            if (index === -1) {
-              const newDocKey = argsKeys[i];
-              const argsChangeKey = argsKeys[i];
-              doc[newDocKey] = args[argsChangeKey];
-            } else {
-              const docChangeKey = docKeys[index];
-              const argsChangeKey = argsKeys[i];
-              doc[docChangeKey] = args[argsChangeKey];
-            }
           }
-          return doc.save().then(doc => doc);
-        }
-        throw new Error('No Such User');
-      });
+        });
+      }
+    },
+    editClass: {
+      type: ClassType,
+      args: {
+        id: { type: GraphQLNonNull(GraphQLString) },
+        name: { type: GraphQLString },
+        section: { type: GraphQLString },
+        admin: { type: GraphQLString },
+        teacher: { type: GraphQLString },
+        assignments: { type: GraphQLList(AssignmentsType) },
+        students: { type: GraphQLList(UserType.InputType) },
+      },
+      resolve(parentVal, args) {
+        const argsKeys = Object.keys(args);
+        return ClassModel.findById(args.id).then((doc) => {
+          if (doc) {
+            const docKeys = Object.keys(doc._doc);
+            console.log(argsKeys);
+            console.log(docKeys);
+            for (let i = 0; i < argsKeys.length; i++) {
+              const index = docKeys.indexOf(argsKeys[i]);
+              console.log(index);
+              if (index === -1) {
+                const newDocKey = argsKeys[i];
+                const argsChangeKey = argsKeys[i];
+                doc[newDocKey] = args[argsChangeKey];
+              } else {
+                const docChangeKey = docKeys[index];
+                const argsChangeKey = argsKeys[i];
+                doc[docChangeKey] = args[argsChangeKey];
+              }
+            }
+            return doc.save().then(doc => doc);
+          }
+          throw new Error('No Such User');
+        });
+      },
+    },
+    addOrganization: {
+      type: OrganizationType,
+      args: {
+        name: { type: GraphQLNonNull(GraphQLString) },
+        admin: { type: GraphQLNonNull(GraphQLString) },
+      },
+      resolve(parentVal, args) {
+        return UserModel.findById(args.admin).then((doc) => {
+          if (doc) {
+            return new OrganizationModel({
+              name: args.name,
+              admin: args.admin,
+              dateCreated: parseInt(Date.now(), 10),
+            })
+              .save()
+              .then((doc) => {
+                if (doc) {
+                  return doc;
+                }
+                throw new Error('Error While Trying To Save Organization');
+              });
+          }
+          throw new Error('No Such User');
+        });
+      },
+    },
+    removeOrganization: {
+      type: OrganizationType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve(parentVal, args) {
+        return OrganizationModel.remove({ _id: args.id }).then((doc) => {
+          if (doc) {
+            throw new Error('Organization Removed');
+          } else {
+            throw new Error('Error Removing Organization');
+          }
+        });
+      },
+    },
+    editOrganization: {
+      type: OrganizationType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) },
+        name: { type: GraphQLString },
+        classes: { type: GraphQLList(ClassType.InputType) },
+        teachers: { type: GraphQLList(UserType.InputType) },
+        students: { type: GraphQLList(UserType.InputType) },
+        admin: { type: GraphQLString },
+      },
+      resolve(parentVal, args) {
+        const argsKeys = Object.keys(args);
+        return OrganizationModel.findById(args.id).then((doc) => {
+          if (doc) {
+            const docKeys = Object.keys(doc._doc);
+            for (let i = 0; i < argsKeys.length; i++) {
+              const index = docKeys.indexOf(argsKeys[i]);
+              console.log(index);
+              if (index === -1) {
+                const newDocKey = argsKeys[i];
+                const argsChangeKey = argsKeys[i];
+                doc[newDocKey] = args[argsChangeKey];
+              } else {
+                const docChangeKey = docKeys[index];
+                const argsChangeKey = argsKeys[i];
+                doc[docChangeKey] = args[argsChangeKey];
+              }
+            }
+            return doc.save().then(doc => doc);
+          }
+          throw new Error('No Such User');
+        });
+      },
     },
   },
-  }
-}
-})
+});
